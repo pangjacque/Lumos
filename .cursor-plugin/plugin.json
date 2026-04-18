@@ -1,0 +1,5 @@
+{
+  "name": "lumos",
+  "description": "Illuminate your data science project — builds a knowledge graph from your codebase, Jupyter notebooks, and documentation with cross-boundary import resolution",
+  "version": "0.1.0"
+}

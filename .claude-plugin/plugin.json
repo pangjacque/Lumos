@@ -1,0 +1,19 @@
+{
+  "name": "lumos",
+  "description": "Illuminate your data science project — builds a knowledge graph from your codebase, Jupyter notebooks, and documentation with cross-boundary import resolution",
+  "version": "0.1.0",
+  "author": {
+    "name": "Lumos Contributors"
+  },
+  "repository": "https://github.com/your-org/lumos",
+  "license": "MIT",
+  "keywords": [
+    "knowledge-graph",
+    "jupyter",
+    "notebook",
+    "data-science",
+    "ml",
+    "codebase",
+    "documentation"
+  ]
+}
