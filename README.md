@@ -84,7 +84,7 @@ claude --plugin-dir ./lumos
 After scanning, open the interactive HTML report:
 
 ```bash
-open .lumos/report.html
+open .lumos/report-force.html
 ```
 
 ## How It Works
@@ -193,7 +193,7 @@ Lumos finds references to code and notebooks in documentation:
 ```
 .lumos/
 ├── knowledge-graph.json     ← complete graph (all nodes + edges)
-├── report.html              ← interactive visualization (open in browser)
+├── report-force.html              ← interactive visualization (open in browser)
 ├── metadata.json            ← commit hash + file hashes (for incremental updates)
 └── intermediate/            ← working files (can be .gitignored)
     ├── scan-result.json

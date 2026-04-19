@@ -628,7 +628,7 @@ def generate_report(project_root: str) -> str:
     graph_json = json.dumps(graph_data)
     html = HTML_TEMPLATE.replace("__GRAPH_JSON__", graph_json)
 
-    report_path = os.path.join(project_root, ".lumos", "report.html")
+    report_path = os.path.join(project_root, ".lumos", "report-force.html")
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(html)
 
