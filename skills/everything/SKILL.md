@@ -34,9 +34,23 @@ Examples:
 
 ## Workflow
 
-Execute these steps in order. The plugin's Python scripts are located in the `bin/` directory of this plugin.
+**IMPORTANT: Use the TodoWrite tool to show progress through each phase.** Create the full task list at the start, then update each task as you work through it. This gives the user a clear progress indicator.
 
-### Step 1 — Check for incremental update
+At the start, create this todo list:
+
+```
+◻ Phase 1 — SCAN (discover project files)
+◻ Phase 2 — CODE (extract codebase structure)
+◻ Phase 3 — NOTEBOOKS (extract cell structure)
+◻ Phase 4 — DOCS (extract documentation)
+◻ Phase 5 — RESOLVE (cross-boundary imports)
+◻ Phase 6 — MERGE (build knowledge graph)
+◻ Phase 7 — REPORT (generate HTML reports)
+```
+
+Mark each task as `in_progress` when starting it and `completed` when done.
+
+### Phase 1 — SCAN
 
 Unless `--rebuild` is specified:
 Read `.lumos/metadata.json` if it exists. Compare the stored `last_commit` against the current `git rev-parse HEAD`. If they match and no files have changed, ask the user:
@@ -45,33 +59,78 @@ Read `.lumos/metadata.json` if it exists. Compare the stored `last_commit` again
 
 If metadata doesn't exist or commits differ, proceed with full scan.
 
-### Step 2 — Project scan
-
 Dispatch the **project-scanner** agent to discover all files and categorize them.
 
-### Step 3 — Extraction
+### Phase 2 — CODE
 
-Based on flags, run the appropriate agents. If no flags, run all three concurrently:
-1. **code-analyzer** — extract code structure from Python files (skip if `--notebook-only` or `--doc-only`)
-2. **notebook-analyzer** — extract cell structure from Jupyter notebooks (skip if `--code-only` or `--doc-only`)
-3. **doc-analyzer** — extract documentation structure from markdown files (skip if `--code-only` or `--notebook-only`)
+Skip if `--notebook-only` or `--doc-only`.
 
-### Step 4 — Import resolution
+Dispatch the **code-analyzer** agent to extract code structure from Python files.
+
+### Phase 3 — NOTEBOOKS
+
+Skip if `--code-only` or `--doc-only`.
+
+Dispatch the **notebook-analyzer** agent to extract cell structure from Jupyter notebooks.
+
+### Phase 4 — DOCS
+
+Skip if `--code-only` or `--notebook-only`.
+
+Dispatch the **doc-analyzer** agent to extract documentation structure from markdown files.
+
+### Phase 5 — RESOLVE
 
 Skip if `--code-only` or `--doc-only` (cross-boundary requires both code and notebooks).
 
 Dispatch the **import-resolver** agent to create cross-boundary edges linking notebook cells to codebase entities and doc references to code/notebooks.
 
-### Step 5 — Graph merge and validation
+### Phase 6 — MERGE
 
 Dispatch the **graph-reviewer** agent to merge all outputs into `knowledge-graph.json` and validate integrity.
 
-### Step 6 — Report
+### Phase 7 — REPORT
 
 Unless `--no-report` is specified, generate the HTML reports.
 
-Tell the user:
-1. Summary: X nodes, Y edges, Z cross-boundary connections
-2. Open the interactive report: `.lumos/report-cards.html`
-3. Use `/lumos:chat` to ask questions about the project
-4. Use `/lumos:diff` to check impact of changes
+### Final Summary
+
+After all phases complete, read `.lumos/knowledge-graph.json` and present a summary like this:
+
+```
+Lumos Knowledge Graph
+
+Project: <project name> — <one-line description from README or inferred>
+
+Files analyzed: X
+  code: N · notebooks: N · docs: N · config: N
+
+Nodes: X
+  file: N · class: N · function: N · notebook: N · cell: N · document: N · doc_section: N
+
+Edges: X
+  contains: N · imports: N · cell_flow: N · cell_data_flow: N
+  cross_boundary_import: N · cross_boundary_call: N
+  doc_references_code: N · doc_references_notebook: N
+
+Notebooks: N total, M cells
+  Cross-boundary connections: N (notebook cells → codebase)
+  Data flow edges: N (variable dependencies between cells)
+  Execution anomalies: list any notebooks with out-of-order or error cells
+
+Documentation: N files
+  Types: model_doc (N), data_dictionary (N), general (N)
+  Code references found: N
+  Notebook references found: N
+
+Outputs at .lumos/:
+  knowledge-graph.json (X KB)
+  report-cards.html (hierarchy + notebook view)
+  report-force.html (force graph view)
+  metadata.json
+
+Use /lumos:chat to ask questions about the project.
+Use /lumos:diff to check impact of changes.
+```
+
+Read the actual stats from the knowledge graph JSON to fill in the numbers. Do NOT guess or make up numbers.
