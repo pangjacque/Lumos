@@ -12,6 +12,18 @@ import re
 import sys
 from pathlib import Path
 
+# Optional: markitdown converts .docx/.pdf/.pptx/.xlsx to markdown.
+# Lumos works with .md/.rst alone — markitdown is only needed for rich-doc support.
+try:
+    from markitdown import MarkItDown
+    _markitdown = MarkItDown()
+    MARKITDOWN_AVAILABLE = True
+except ImportError:
+    _markitdown = None
+    MARKITDOWN_AVAILABLE = False
+
+RICH_DOC_EXTENSIONS = {".docx", ".doc", ".pdf", ".pptx", ".ppt", ".xlsx"}
+
 
 # --- Document type detection ---
 
@@ -90,32 +102,67 @@ def classify_document(content: str, filename: str) -> str:
 
 # --- Section extraction ---
 
+HASH_HEADING = re.compile(r"^(#{1,6})\s+(.+)")
+# "1  Model purpose" or "5.4.2  Stress loss calculation" — number + title on same line.
+# Limited to ≤4 levels to avoid matching version strings like "1.2.3.4.5".
+INLINE_NUMBERED = re.compile(r"^(\d+(?:\.\d+){0,3})\s+([A-Z][^\.]{2,})\s*$")
+# "1.1" or "5.4.2" alone — title on a later line. Only fires for nested numbers (≥1 dot).
+NUMBER_ONLY = re.compile(r"^(\d+(?:\.\d+){1,3})\s*$")
+# TOC line: title followed by dots then page number.
+TOC_LINE = re.compile(r"\.{4,}\s*\d+\s*$")
+
+
 def extract_sections(content: str) -> list:
-    """Extract markdown sections with their heading hierarchy."""
+    """Extract sections from `#` markdown headings or "1.2 Title"-style numbered headings (PDFs)."""
     sections = []
     current_section = None
     current_body_lines = []
 
-    for line in content.split("\n"):
-        heading_match = re.match(r"^(#{1,6})\s+(.+)", line)
-        if heading_match:
-            # Save previous section
+    raw_lines = content.split("\n")
+    i = 0
+    while i < len(raw_lines):
+        line = raw_lines[i].lstrip("\x0c").rstrip()
+
+        if TOC_LINE.search(line):
+            i += 1
+            continue
+
+        heading = None
+
+        m = HASH_HEADING.match(line)
+        if m:
+            heading = (len(m.group(1)), m.group(2).strip())
+
+        if not heading:
+            m = INLINE_NUMBERED.match(line)
+            if m:
+                level = m.group(1).count(".") + 1
+                heading = (level, f"{m.group(1)} {m.group(2).strip()}")
+
+        if not heading:
+            m = NUMBER_ONLY.match(line)
+            if m:
+                j = i + 1
+                while j < len(raw_lines) and (not raw_lines[j].strip() or TOC_LINE.search(raw_lines[j])):
+                    j += 1
+                if j < len(raw_lines):
+                    title_candidate = raw_lines[j].strip().lstrip("\x0c").strip()
+                    if title_candidate and title_candidate[0].isupper() and len(title_candidate) <= 200:
+                        level = m.group(1).count(".") + 1
+                        heading = (level, f"{m.group(1)} {title_candidate}")
+                        i = j
+
+        if heading:
             if current_section:
                 current_section["body"] = "\n".join(current_body_lines).strip()
                 sections.append(current_section)
-
-            level = len(heading_match.group(1))
-            title = heading_match.group(2).strip()
-            current_section = {
-                "title": title,
-                "level": level,
-                "body": "",
-            }
+            current_section = {"title": heading[1], "level": heading[0], "body": ""}
             current_body_lines = []
         elif current_section:
-            current_body_lines.append(line)
+            current_body_lines.append(raw_lines[i])
 
-    # Save last section
+        i += 1
+
     if current_section:
         current_section["body"] = "\n".join(current_body_lines).strip()
         sections.append(current_section)
@@ -184,14 +231,28 @@ def extract_section_references(section: dict) -> dict:
 
 # --- Main doc extraction ---
 
+def read_doc_content(filepath: str):
+    """Read doc content. Rich formats (.docx/.pdf/.pptx/.xlsx) go through markitdown."""
+    ext = Path(filepath).suffix.lower()
+    if ext in RICH_DOC_EXTENSIONS:
+        if not MARKITDOWN_AVAILABLE:
+            raise RuntimeError(
+                f"markitdown not installed — cannot read {ext} files. "
+                f"Install with: pip install 'markitdown[all]'"
+            )
+        result = _markitdown.convert(filepath)
+        return result.text_content, ext.lstrip(".")
+    with open(filepath, "r", encoding="utf-8") as f:
+        return f.read(), ext.lstrip(".") or "txt"
+
+
 def analyze_document(filepath: str, project_root: str) -> dict:
     """Analyze a single documentation file."""
     rel_path = os.path.relpath(filepath, project_root)
 
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
-            content = f.read()
-    except (OSError, IOError, UnicodeDecodeError) as e:
+        content, source_format = read_doc_content(filepath)
+    except (OSError, IOError, UnicodeDecodeError, RuntimeError) as e:
         return {"file": rel_path, "error": str(e), "nodes": [], "edges": []}
 
     doc_type = classify_document(content, Path(rel_path).name)
@@ -209,6 +270,7 @@ def analyze_document(filepath: str, project_root: str) -> dict:
         "name": Path(rel_path).stem,
         "file": rel_path,
         "doc_type": doc_type,
+        "source_format": source_format,
         "summary": "",
         "lines": len(content.splitlines()),
         "section_count": len(sections),
