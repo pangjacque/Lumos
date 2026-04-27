@@ -8,6 +8,5 @@ build/
 .venv/
 venv/
 
-# Local test fixtures — not shipped with the plugin
-examples/
+# Build artifacts (never tracked, on any branch)
 .lumos/
