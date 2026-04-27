@@ -1,7 +1,0 @@
-[run]
-branch = True
-source =
-  flaml
-omit =
-  */test/*
-  */flaml/autogen/*

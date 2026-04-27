@@ -7,3 +7,7 @@ dist/
 build/
 .venv/
 venv/
+
+# Local test fixtures — not shipped with the plugin
+examples/
+.lumos/

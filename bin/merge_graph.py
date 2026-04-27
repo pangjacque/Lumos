@@ -19,6 +19,7 @@ def merge_graphs(project_root: str) -> dict:
     # Load all intermediate files
     scan_result = {}
     code_extract = {"nodes": [], "edges": []}
+    scala_extract = {"nodes": [], "edges": []}
     notebook_extract = {"nodes": [], "edges": []}
     doc_extract = {"nodes": [], "edges": []}
     import_resolution = {"cross_boundary_edges": []}
@@ -32,6 +33,11 @@ def merge_graphs(project_root: str) -> dict:
     if os.path.exists(code_path):
         with open(code_path, "r") as f:
             code_extract = json.load(f)
+
+    scala_path = os.path.join(intermediate_dir, "scala-extract.json")
+    if os.path.exists(scala_path):
+        with open(scala_path, "r") as f:
+            scala_extract = json.load(f)
 
     notebook_path = os.path.join(intermediate_dir, "notebook-extract.json")
     if os.path.exists(notebook_path):
@@ -52,7 +58,7 @@ def merge_graphs(project_root: str) -> dict:
     all_nodes = []
     seen_node_ids = set()
 
-    for source in [code_extract, notebook_extract, doc_extract]:
+    for source in [code_extract, scala_extract, notebook_extract, doc_extract]:
         for node in source.get("nodes", []):
             if node["id"] not in seen_node_ids:
                 seen_node_ids.add(node["id"])
@@ -62,7 +68,7 @@ def merge_graphs(project_root: str) -> dict:
     all_edges = []
     seen_edge_keys = set()
 
-    for source in [code_extract, notebook_extract, doc_extract]:
+    for source in [code_extract, scala_extract, notebook_extract, doc_extract]:
         for edge in source.get("edges", []):
             key = (edge["source"], edge["target"], edge["type"])
             if key not in seen_edge_keys:

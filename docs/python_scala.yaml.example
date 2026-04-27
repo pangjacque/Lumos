@@ -1,0 +1,23 @@
+# python_scala.yaml — explicit Py4J bridge mappings
+#
+# Lumos detects Py4J patterns automatically (e.g., spark._jvm.com.example.MyClass()).
+# Use this file ONLY if auto-detection misses bridges or you want to:
+#   - Map a JVM path to a Scala class that lives in a different file/path than the auto-match
+#   - Translate Python method names to Scala method names (camelCase vs snake_case)
+#   - Document non-obvious bridges (e.g., Python uses a generic gateway)
+#
+# Place this file at the project root as `python_scala.yaml`.
+# Optional dependency: PyYAML (already in bin/requirements.txt)
+
+bridges:
+  - python: spark_demo/python_wrapper.py:FeatureEngineerWrapper
+    scala: spark_demo/MetricsCalculator.scala:MetricsCalculator
+    jvm_path: com.example.MetricsCalculator
+    methods:
+      compute_metrics: giniCoefficient
+
+  - python: spark_demo/python_wrapper.py:FeatureEngineerWrapper
+    scala: spark_demo/MetricsCalculator.scala:ModelEvaluator
+    jvm_path: com.example.ModelEvaluator
+    methods:
+      evaluate: evaluate

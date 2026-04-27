@@ -132,6 +132,119 @@ def extract_call_references(tree: ast.AST) -> list:
     return calls
 
 
+# --- Py4J Bridge Detection ---
+# Recognizes patterns like:
+#   spark._jvm.com.example.MyClass()
+#   sc._jvm.org.apache.spark.MyHelper.doWork()
+#   self._jvm.com.company.Pipeline.run(df._jdf)
+#   gateway.jvm.scala.collection.mutable.ListBuffer()
+
+PY4J_GATEWAY_NAMES = {"_jvm", "jvm"}
+# Skip well-known framework JVM packages — they're not user Scala code
+PY4J_FRAMEWORK_PREFIXES = (
+    "org.apache.spark.",
+    "org.apache.hadoop.",
+    "org.apache.kafka.",
+    "scala.",
+    "java.",
+    "javax.",
+    "org.apache.",
+)
+
+
+def _attribute_chain(node):
+    """Walk an Attribute chain and return the list of attribute names + the leftmost base name."""
+    parts = []
+    current = node
+    while isinstance(current, ast.Attribute):
+        parts.append(current.attr)
+        current = current.value
+    base = None
+    if isinstance(current, ast.Name):
+        base = current.id
+    return list(reversed(parts)), base
+
+
+def detect_py4j_bridges(tree: ast.AST, source: str) -> list:
+    """
+    Detect Py4J bridge patterns where Python code invokes Scala/Java JVM classes.
+
+    Returns a list of bridge dicts:
+      [
+        {
+          "kind": "instantiate" | "method_call" | "static_access",
+          "jvm_path": "com.example.MyClass",
+          "method": "doWork" or None,
+          "gateway": "_jvm" or "jvm",
+          "line": 42,
+          "is_framework": False  # True if it's Spark/Hadoop/Java internals
+        }, ...
+      ]
+    """
+    bridges = []
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if not isinstance(node.func, ast.Attribute):
+            continue
+
+        # Build the full attribute chain
+        parts, base = _attribute_chain(node.func)
+        if not parts:
+            continue
+
+        # Find _jvm or .jvm in the chain
+        gateway_idx = None
+        for i, p in enumerate(parts):
+            if p in PY4J_GATEWAY_NAMES:
+                gateway_idx = i
+                break
+        # Also check if base name itself is .jvm via something like spark._jvm
+        # parts already contains _jvm in that case
+
+        if gateway_idx is None:
+            continue
+
+        # After the gateway, we have a JVM class path
+        jvm_parts = parts[gateway_idx + 1:]
+        if not jvm_parts:
+            continue
+
+        # The last part might be a method (for static calls) or class name
+        # Heuristic: if the last segment is lowercase, it's likely a method;
+        # if PascalCase (or has parens treated as constructor), it's a class.
+        # For Call nodes, we treat the whole chain as the called thing.
+        # Common patterns:
+        #   spark._jvm.com.example.MyClass()           -> instantiate MyClass
+        #   spark._jvm.com.example.MyClass.doWork()    -> static call doWork
+        #   self._jvm.com.example.MyClass.helper(...)  -> static call helper
+
+        is_framework = any(".".join(jvm_parts).startswith(p.rstrip(".")) for p in PY4J_FRAMEWORK_PREFIXES)
+
+        # If the last segment starts with uppercase, treat as constructor
+        if jvm_parts[-1] and jvm_parts[-1][0].isupper():
+            kind = "instantiate"
+            jvm_path = ".".join(jvm_parts)
+            method = None
+        else:
+            # static method call: last segment is the method, rest is the class path
+            kind = "method_call"
+            method = jvm_parts[-1]
+            jvm_path = ".".join(jvm_parts[:-1])
+
+        bridges.append({
+            "kind": kind,
+            "jvm_path": jvm_path,
+            "method": method,
+            "gateway": parts[gateway_idx],
+            "line": node.lineno,
+            "is_framework": is_framework,
+        })
+
+    return bridges
+
+
 def _decorator_name(node: ast.expr) -> str:
     if isinstance(node, ast.Name):
         return node.id
@@ -172,6 +285,7 @@ def analyze_file(filepath: str, project_root: str) -> dict:
     functions = extract_functions(tree, rel_path)
     classes = extract_classes(tree, rel_path)
     assignments = extract_top_level_assignments(tree)
+    py4j_bridges = detect_py4j_bridges(tree, source)
     calls = extract_call_references(tree)
     line_count = len(source.splitlines())
 
@@ -289,6 +403,14 @@ def analyze_file(filepath: str, project_root: str) -> dict:
             "detail": imp,
         })
 
+    # Annotate the file node with detected Py4J bridges so downstream
+    # resolution can create cross-language edges.
+    if py4j_bridges:
+        for n in nodes:
+            if n["id"] == file_node_id:
+                n["py4j_bridges"] = py4j_bridges
+                break
+
     return {
         "file": rel_path,
         "module_name": module_name,
@@ -297,6 +419,7 @@ def analyze_file(filepath: str, project_root: str) -> dict:
         "imports": imports,
         "calls": calls,
         "assignments": [a["name"] for a in assignments],
+        "py4j_bridges": py4j_bridges,
     }
 
 
@@ -362,11 +485,21 @@ def extract_codebase(project_root: str, scan_result: dict) -> dict:
         else:
             resolved_edges.append(edge)
 
+    # Aggregate Py4J bridge findings across all files
+    all_py4j_bridges = []
+    for r in file_results:
+        for b in r.get("py4j_bridges", []):
+            all_py4j_bridges.append({
+                **b,
+                "source_file": r["file"],
+            })
+
     return {
         "nodes": all_nodes,
         "edges": resolved_edges,
         "code_registry": code_registry,
         "file_results": file_results,
+        "py4j_bridges": all_py4j_bridges,
     }
 
 
