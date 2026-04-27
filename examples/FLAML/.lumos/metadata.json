@@ -1,13 +1,18 @@
 {
-  "last_commit": "f8ebe871d6b9ae5a309a5f0e908c1496296f995f",
-  "last_scan_timestamp": "2026-04-18T05:21:11.050642+00:00",
-  "file_count": 153,
+  "last_commit": "021d0a9a29fac5197e899500b6dac24f7a85970a",
+  "last_scan_timestamp": "2026-04-26T04:29:34.755550+00:00",
+  "file_count": 160,
   "file_hashes": {
+    ".claude/settings.local.json": "37cdcff28ce5d680aef993fcf85075b60e8d9dcda987c695f239fc10dc42d6e7",
     ".coveragerc": "f3a1ce4d49626244c3f664243e4192dd1f890f91ffe1b8f51f1bdc8cf83488f3",
     ".devcontainer/Dockerfile": "1e69731edde1de3e6c1c06c9608d43fdd68ad72be61415970cf35eaaa263ed84",
     ".devcontainer/devcontainer.json": "a15c4d0a381ccf2dc85d235c565a46097b1d3c78f23d945440fcca4e6d3b93c1",
     ".gitignore": "cbb20977adc7357768bb6f85d5ed60b316cf4cec17ac2da84109543946882197",
     ".pre-commit-config.yaml": "fe66f27e5ee13c41c2c1ec758c2dab687c378631ca44c1592a660dadfa587154",
+    ".understand-anything/.understandignore": "16343ffa4911f4592399393ae1974e91160dac0127a845c167daada28987034f",
+    ".understand-anything/fingerprints.json": "c171d515260a6c3b6165729e2a192f3c02e77d9938ee4bd614b02e18f0c1137e",
+    ".understand-anything/knowledge-graph.json": "e0b8c26d94daf676510e7facb5c6801a214cf32fd95bf25516bdaa867bff3778",
+    ".understand-anything/meta.json": "6a22925a9cd55654aeab509bb6a14334838027d028206751c1c2af77bc70e898",
     "README.md": "cb47aac65c89648d0afb198c0db09e195a72d84ccd2dc417bb0a35ec9112532e",
     "docs/automl_xgboost_documentation.md": "5266921bd35a2488bbdd0758c467c8860bf1d6e2238352ab711c66e55d0405ac",
     "flaml/__init__.py": "e8200b907c4666f42fbc220b52876d0a00505accb7fe0b8bbaf1e8ea7c89fe45",
@@ -155,6 +160,8 @@
     "notebook/tune_lexicographic.ipynb": "e81296f0cb1d0a31d3571cf6684b9f0bedef6c57db8580b30e0a8f8cd2d068fe",
     "notebook/tune_pytorch.ipynb": "d40cba36825682affa5e140f1e3efa068140d7f177c1e6e4898d856ee3df35da",
     "notebook/tune_synapseml.ipynb": "c5df811035092d8ef3c8cc3e45be85af24a95dd33cea663203436bb1ba9ed312",
-    "notebook/zeroshot_lightgbm.ipynb": "6e4a90782a5e815859a2893e4d210cda6b4b56f070d49fd4e7ce6f611c63e05a"
+    "notebook/zeroshot_lightgbm.ipynb": "6e4a90782a5e815859a2893e4d210cda6b4b56f070d49fd4e7ce6f611c63e05a",
+    "spark_demo/MetricsCalculator.scala": "1507726368a127dee7792660e2525043f335f8241dd685edf100675ed04040f4",
+    "spark_demo/python_wrapper.py": "6e032b570ecf08a0e72aa291d6865729dd718b5b7a8328f2e2ecd3e80a323cea"
   }
 }

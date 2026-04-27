@@ -1,24 +1,32 @@
 {
   "project_root": "/Users/pangjac/Work/claude-code-understand-code-ipynb/lumos/examples/FLAML",
-  "commit": "f8ebe871d6b9ae5a309a5f0e908c1496296f995f",
-  "total_files": 153,
+  "commit": "021d0a9a29fac5197e899500b6dac24f7a85970a",
+  "total_files": 160,
   "categories": {
-    "code": 88,
+    "code": 90,
     "notebook": 35,
     "doc": 6,
-    "config": 23,
+    "config": 27,
     "data": 0,
-    "other": 1
+    "other": 2
   },
   "languages": {
-    "unknown": 3,
-    "json": 20,
+    "json": 24,
+    "unknown": 4,
     "yaml": 1,
     "markdown": 6,
-    "python": 88,
-    "jupyter": 35
+    "python": 89,
+    "jupyter": 35,
+    "scala": 1
   },
   "files": [
+    {
+      "path": ".claude/settings.local.json",
+      "category": "config",
+      "language": "json",
+      "lines": 12,
+      "hash": "37cdcff28ce5d680aef993fcf85075b60e8d9dcda987c695f239fc10dc42d6e7"
+    },
     {
       "path": ".coveragerc",
       "category": "other",
@@ -53,6 +61,34 @@
       "language": "yaml",
       "lines": 51,
       "hash": "fe66f27e5ee13c41c2c1ec758c2dab687c378631ca44c1592a660dadfa587154"
+    },
+    {
+      "path": ".understand-anything/.understandignore",
+      "category": "other",
+      "language": "unknown",
+      "lines": 125,
+      "hash": "16343ffa4911f4592399393ae1974e91160dac0127a845c167daada28987034f"
+    },
+    {
+      "path": ".understand-anything/fingerprints.json",
+      "category": "config",
+      "language": "json",
+      "lines": 8995,
+      "hash": "c171d515260a6c3b6165729e2a192f3c02e77d9938ee4bd614b02e18f0c1137e"
+    },
+    {
+      "path": ".understand-anything/knowledge-graph.json",
+      "category": "config",
+      "language": "json",
+      "lines": 9234,
+      "hash": "e0b8c26d94daf676510e7facb5c6801a214cf32fd95bf25516bdaa867bff3778"
+    },
+    {
+      "path": ".understand-anything/meta.json",
+      "category": "config",
+      "language": "json",
+      "lines": 6,
+      "hash": "6a22925a9cd55654aeab509bb6a14334838027d028206751c1c2af77bc70e898"
     },
     {
       "path": "README.md",
@@ -1089,6 +1125,20 @@
       "language": "jupyter",
       "lines": 618,
       "hash": "6e4a90782a5e815859a2893e4d210cda6b4b56f070d49fd4e7ce6f611c63e05a"
+    },
+    {
+      "path": "spark_demo/MetricsCalculator.scala",
+      "category": "code",
+      "language": "scala",
+      "lines": 33,
+      "hash": "1507726368a127dee7792660e2525043f335f8241dd685edf100675ed04040f4"
+    },
+    {
+      "path": "spark_demo/python_wrapper.py",
+      "category": "code",
+      "language": "python",
+      "lines": 38,
+      "hash": "6e032b570ecf08a0e72aa291d6865729dd718b5b7a8328f2e2ecd3e80a323cea"
     }
   ]
 }

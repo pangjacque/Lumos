@@ -264,6 +264,136 @@ def resolve_doc_references(
     return cross_edges
 
 
+def load_py4j_overrides(project_root: str) -> dict:
+    """
+    Load optional python_scala.yaml mapping that explicitly declares Py4J bridges.
+    Schema:
+        bridges:
+          - python: src/wrappers/feature_engineer.py:FeatureEngineer
+            scala: src/main/scala/com/example/FeatureEngineer.scala:FeatureEngineer
+            jvm_path: com.example.FeatureEngineer
+            methods:
+              calculate_gini: calculateGini
+    Returns dict keyed by jvm_path.
+    """
+    yaml_path = os.path.join(project_root, "python_scala.yaml")
+    if not os.path.exists(yaml_path):
+        return {}
+    try:
+        import yaml  # type: ignore
+    except ImportError:
+        return {}
+    try:
+        with open(yaml_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+    except Exception:
+        return {}
+    overrides = {}
+    for entry in data.get("bridges", []):
+        jvm_path = entry.get("jvm_path")
+        if jvm_path:
+            overrides[jvm_path] = entry
+    return overrides
+
+
+def build_scala_class_index(code_extract: dict) -> dict:
+    """
+    Build an index from JVM-style fully-qualified class paths to Scala node IDs.
+    Maps:
+      "com.example.FeatureEngineer" -> "class:src/main/scala/.../FeatureEngineer.scala:FeatureEngineer"
+    """
+    index = {}
+    for n in code_extract.get("nodes", []):
+        if n.get("language") != "scala" and not n.get("scala_kind"):
+            continue
+        if n["type"] != "class":
+            continue
+        package = n.get("package", "")
+        name = n.get("name", "")
+        if not name:
+            continue
+        if package:
+            index[f"{package}.{name}"] = n["id"]
+        # Also index by short name for fuzzier matching
+        index.setdefault(name, n["id"])
+    return index
+
+
+def resolve_py4j_bridges(project_root: str, code_extract: dict) -> list:
+    """
+    Resolve Py4J bridge patterns to Scala class nodes.
+
+    For each Py4J bridge detected in Python code:
+      - Look up the JVM path in the Scala class index
+      - Apply any python_scala.yaml override
+      - Skip framework calls (Spark/Hadoop/Java internals)
+      - Create py4j_bridge or py4j_method_call edges
+    """
+    bridges = code_extract.get("py4j_bridges", [])
+    if not bridges:
+        return []
+
+    scala_index = build_scala_class_index(code_extract)
+    overrides = load_py4j_overrides(project_root)
+    new_edges = []
+
+    for b in bridges:
+        if b.get("is_framework"):
+            continue  # Skip Spark/Hadoop/Java internals
+
+        jvm_path = b["jvm_path"]
+        method = b.get("method")
+        source_file = b["source_file"]
+        source_id = f"file:{source_file}"
+
+        # Override takes priority
+        target_id = None
+        if jvm_path in overrides:
+            ov = overrides[jvm_path]
+            scala_ref = ov.get("scala", "")
+            if ":" in scala_ref:
+                file_part, class_name = scala_ref.split(":", 1)
+                candidate = f"class:{file_part}:{class_name}"
+                # Verify it exists
+                if any(n["id"] == candidate for n in code_extract.get("nodes", [])):
+                    target_id = candidate
+            # Method override
+            if method and ov.get("methods", {}).get(method):
+                method = ov["methods"][method]
+
+        # Try direct lookup in Scala index
+        if not target_id and jvm_path in scala_index:
+            target_id = scala_index[jvm_path]
+
+        # Try short class name (last segment of jvm_path)
+        if not target_id and jvm_path:
+            short_name = jvm_path.split(".")[-1]
+            if short_name in scala_index:
+                target_id = scala_index[short_name]
+
+        if not target_id:
+            # Unresolved — create a placeholder edge to track that a bridge exists
+            target_id = f"jvm:{jvm_path}"
+
+        if b["kind"] == "instantiate":
+            edge_type = "py4j_bridge"
+            detail = {"jvm_path": jvm_path, "kind": "instantiate", "line": b["line"]}
+        else:
+            edge_type = "py4j_method_call"
+            detail = {"jvm_path": jvm_path, "method": method, "line": b["line"]}
+
+        new_edges.append({
+            "source": source_id,
+            "target": target_id,
+            "type": edge_type,
+            "direction": "forward",
+            "weight": 0.9,
+            "detail": detail,
+        })
+
+    return new_edges
+
+
 def resolve_all(project_root: str, code_extract: dict, notebook_extract: dict, doc_extract: dict) -> dict:
     """Run all import resolution passes."""
     all_edges = []
@@ -280,6 +410,10 @@ def resolve_all(project_root: str, code_extract: dict, notebook_extract: dict, d
     doc_edges = resolve_doc_references(doc_extract, code_extract, notebook_extract)
     all_edges.extend(doc_edges)
 
+    # Pass 4: Py4J bridges → Scala classes
+    py4j_edges = resolve_py4j_bridges(project_root, code_extract)
+    all_edges.extend(py4j_edges)
+
     # Deduplicate edges
     seen = set()
     unique_edges = []
@@ -295,6 +429,7 @@ def resolve_all(project_root: str, code_extract: dict, notebook_extract: dict, d
             "import_edges": len(import_edges),
             "call_edges": len(call_edges),
             "doc_edges": len(doc_edges),
+            "py4j_edges": len(py4j_edges),
             "total_unique": len(unique_edges),
         },
     }
@@ -311,10 +446,29 @@ def main():
     project_root = os.path.abspath(args.project_root)
     intermediate_dir = os.path.join(project_root, ".lumos", "intermediate")
 
-    with open(os.path.join(intermediate_dir, "code-extract.json"), "r") as f:
-        code_extract = json.load(f)
-    with open(os.path.join(intermediate_dir, "notebook-extract.json"), "r") as f:
-        notebook_extract = json.load(f)
+    code_extract = {"nodes": [], "edges": [], "code_registry": {}}
+    code_path = os.path.join(intermediate_dir, "code-extract.json")
+    if os.path.exists(code_path):
+        with open(code_path, "r") as f:
+            code_extract = json.load(f)
+
+    # Merge Scala extract into code_extract so resolver treats Scala entities
+    # the same as Python ones for cross-boundary resolution
+    scala_path = os.path.join(intermediate_dir, "scala-extract.json")
+    if os.path.exists(scala_path):
+        with open(scala_path, "r") as f:
+            scala_extract = json.load(f)
+        code_extract["nodes"] = code_extract.get("nodes", []) + scala_extract.get("nodes", [])
+        code_extract["edges"] = code_extract.get("edges", []) + scala_extract.get("edges", [])
+        merged_registry = dict(code_extract.get("code_registry", {}))
+        merged_registry.update(scala_extract.get("code_registry", {}))
+        code_extract["code_registry"] = merged_registry
+
+    notebook_extract = {"nodes": [], "edges": [], "imports": [], "calls": []}
+    notebook_path = os.path.join(intermediate_dir, "notebook-extract.json")
+    if os.path.exists(notebook_path):
+        with open(notebook_path, "r") as f:
+            notebook_extract = json.load(f)
 
     doc_extract = {"nodes": [], "edges": []}
     doc_path = os.path.join(intermediate_dir, "doc-extract.json")

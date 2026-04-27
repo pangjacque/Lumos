@@ -173,10 +173,10 @@
       "section_count": 17,
       "references": {
         "code_refs": [
-          "AutoML",
           "flaml/automl/data.py",
+          "flaml/automl/automl.py",
           "flaml/ml.py",
-          "flaml/automl/automl.py"
+          "AutoML"
         ],
         "notebook_refs": [
           "notebook/automl_xgboost.ipynb"
@@ -309,8 +309,8 @@
       "body_preview": "The design leverages **FLAML** to automate the search for the optimal configuration. The primary hyperparameters tuned include:\n* `n_estimators`: Number of boosting rounds.\n* `max_leaves`: Complexity of the individual trees.\n* `learning_rate`: The step size shrinkage to prevent overfitting.\n* `subsa",
       "references": {
         "code_refs": [
-          "AutoML",
-          "flaml/automl/automl.py"
+          "flaml/automl/automl.py",
+          "AutoML"
         ],
         "notebook_refs": [
           "notebook/automl_xgboost.ipynb"
@@ -1211,22 +1211,22 @@
     },
     {
       "source": "doc_section:docs/automl_xgboost_documentation.md:8",
-      "target": "ref:AutoML",
-      "type": "doc_references_code",
-      "direction": "forward",
-      "weight": 0.8,
-      "detail": {
-        "reference": "AutoML"
-      }
-    },
-    {
-      "source": "doc_section:docs/automl_xgboost_documentation.md:8",
       "target": "ref:flaml/automl/automl.py",
       "type": "doc_references_code",
       "direction": "forward",
       "weight": 0.8,
       "detail": {
         "reference": "flaml/automl/automl.py"
+      }
+    },
+    {
+      "source": "doc_section:docs/automl_xgboost_documentation.md:8",
+      "target": "ref:AutoML",
+      "type": "doc_references_code",
+      "direction": "forward",
+      "weight": 0.8,
+      "detail": {
+        "reference": "AutoML"
       }
     },
     {
@@ -1848,10 +1848,10 @@
           "section_count": 17,
           "references": {
             "code_refs": [
-              "AutoML",
               "flaml/automl/data.py",
+              "flaml/automl/automl.py",
               "flaml/ml.py",
-              "flaml/automl/automl.py"
+              "AutoML"
             ],
             "notebook_refs": [
               "notebook/automl_xgboost.ipynb"
@@ -1984,8 +1984,8 @@
           "body_preview": "The design leverages **FLAML** to automate the search for the optimal configuration. The primary hyperparameters tuned include:\n* `n_estimators`: Number of boosting rounds.\n* `max_leaves`: Complexity of the individual trees.\n* `learning_rate`: The step size shrinkage to prevent overfitting.\n* `subsa",
           "references": {
             "code_refs": [
-              "AutoML",
-              "flaml/automl/automl.py"
+              "flaml/automl/automl.py",
+              "AutoML"
             ],
             "notebook_refs": [
               "notebook/automl_xgboost.ipynb"
@@ -2205,22 +2205,22 @@
         },
         {
           "source": "doc_section:docs/automl_xgboost_documentation.md:8",
-          "target": "ref:AutoML",
-          "type": "doc_references_code",
-          "direction": "forward",
-          "weight": 0.8,
-          "detail": {
-            "reference": "AutoML"
-          }
-        },
-        {
-          "source": "doc_section:docs/automl_xgboost_documentation.md:8",
           "target": "ref:flaml/automl/automl.py",
           "type": "doc_references_code",
           "direction": "forward",
           "weight": 0.8,
           "detail": {
             "reference": "flaml/automl/automl.py"
+          }
+        },
+        {
+          "source": "doc_section:docs/automl_xgboost_documentation.md:8",
+          "target": "ref:AutoML",
+          "type": "doc_references_code",
+          "direction": "forward",
+          "weight": 0.8,
+          "detail": {
+            "reference": "AutoML"
           }
         },
         {
@@ -2329,10 +2329,10 @@
       ],
       "references": {
         "code_refs": [
-          "AutoML",
           "flaml/automl/data.py",
+          "flaml/automl/automl.py",
           "flaml/ml.py",
-          "flaml/automl/automl.py"
+          "AutoML"
         ],
         "notebook_refs": [
           "notebook/automl_xgboost.ipynb"

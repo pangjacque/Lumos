@@ -122,6 +122,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <h4 style="margin-top:8px">Edge Types</h4>
   <div class="legend-item"><div style="width:24px;height:2px;background:#3fb950;border-radius:1px"></div> Data flow (var dependency, hover for name)</div>
   <div class="legend-item"><div style="width:24px;height:2px;background:#f85149;border-radius:1px;border-top:2px dashed #f85149;height:0"></div> Cross-boundary (notebook→code)</div>
+  <div class="legend-item"><div style="width:24px;height:2px;background:#a371f7;border-radius:1px"></div> Py4J bridge (Python→Scala/JVM)</div>
   <div class="legend-item"><div style="width:24px;height:0;border-top:1px dashed #484f58"></div> Cell sequence (document order)</div>
   <div class="legend-item"><div style="width:24px;height:2px;background:#d29922;border-radius:1px"></div> Doc reference</div>
   <div class="legend-item"><div style="width:24px;height:1px;background:#4a6a8a"></div> Contains / Imports</div>
@@ -211,6 +212,8 @@ const EDGE_COLORS = {
   cross_boundary_call: '#ff7b72',
   cross_boundary_method_call: '#ffa198',
   cross_boundary_instantiate: '#ff7b72',
+  py4j_bridge: '#a371f7',
+  py4j_method_call: '#bc8cff',
   doc_references_code: '#d29922',
   doc_references_notebook: '#e3b341',
   metric_implemented_by: '#bc8cff',

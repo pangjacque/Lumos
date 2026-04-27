@@ -2046,22 +2046,22 @@
     },
     {
       "source": "doc_section:docs/automl_xgboost_documentation.md:8",
-      "target": "class:flaml/automl/automl.py:AutoML",
-      "type": "doc_references_code",
-      "direction": "forward",
-      "weight": 0.8,
-      "detail": {
-        "reference": "AutoML"
-      }
-    },
-    {
-      "source": "doc_section:docs/automl_xgboost_documentation.md:8",
       "target": "file:flaml/automl/automl.py",
       "type": "doc_references_code",
       "direction": "forward",
       "weight": 0.8,
       "detail": {
         "reference": "flaml/automl/automl.py"
+      }
+    },
+    {
+      "source": "doc_section:docs/automl_xgboost_documentation.md:8",
+      "target": "class:flaml/automl/automl.py:AutoML",
+      "type": "doc_references_code",
+      "direction": "forward",
+      "weight": 0.8,
+      "detail": {
+        "reference": "AutoML"
       }
     },
     {
@@ -2333,12 +2333,49 @@
         "metric": "roc",
         "function": "BaseTrialRunner.process_trial_result"
       }
+    },
+    {
+      "source": "file:spark_demo/python_wrapper.py",
+      "target": "class:spark_demo/MetricsCalculator.scala:MetricsCalculator",
+      "type": "py4j_bridge",
+      "direction": "forward",
+      "weight": 0.9,
+      "detail": {
+        "jvm_path": "com.example.MetricsCalculator",
+        "kind": "instantiate",
+        "line": 21
+      }
+    },
+    {
+      "source": "file:spark_demo/python_wrapper.py",
+      "target": "class:spark_demo/MetricsCalculator.scala:ModelEvaluator",
+      "type": "py4j_bridge",
+      "direction": "forward",
+      "weight": 0.9,
+      "detail": {
+        "jvm_path": "com.example.ModelEvaluator",
+        "kind": "instantiate",
+        "line": 22
+      }
+    },
+    {
+      "source": "file:spark_demo/python_wrapper.py",
+      "target": "class:spark_demo/MetricsCalculator.scala:MetricsCalculator",
+      "type": "py4j_method_call",
+      "direction": "forward",
+      "weight": 0.9,
+      "detail": {
+        "jvm_path": "com.example.MetricsCalculator",
+        "method": "giniCoefficient",
+        "line": 27
+      }
     }
   ],
   "stats": {
     "import_edges": 117,
     "call_edges": 84,
     "doc_edges": 41,
-    "total_unique": 208
+    "py4j_edges": 3,
+    "total_unique": 211
   }
 }

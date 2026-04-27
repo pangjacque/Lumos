@@ -65,7 +65,12 @@ Dispatch the **project-scanner** agent to discover all files and categorize them
 
 Skip if `--notebook-only` or `--doc-only`.
 
-Dispatch the **code-analyzer** agent to extract code structure from Python files.
+Dispatch language-specific extractor agents in parallel based on what languages were detected in Phase 1 (`scan-result.json` → `languages` field). Currently supported:
+
+- **code-analyzer** — Python (`.py`) — uses Python `ast`. Always dispatch if any Python files exist.
+- **scala-analyzer** — Scala (`.scala`) — uses tree-sitter. Dispatch only if any `.scala` files exist.
+
+If multiple languages are present, run the analyzers concurrently. Skip languages that have zero files in the scan.
 
 ### Phase 3 — NOTEBOOKS
 

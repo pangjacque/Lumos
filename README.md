@@ -132,6 +132,8 @@ open .lumos/report-force.html
 | `cell_data_flow` | Variable flows from one cell to another |
 | `cross_boundary_import` | Notebook cell imports from codebase |
 | `cross_boundary_call` | Notebook cell calls a codebase function |
+| `py4j_bridge` | Python instantiates a Scala class via `spark._jvm` |
+| `py4j_method_call` | Python calls a static Scala method via `spark._jvm` |
 | `doc_references_code` | Doc section mentions a code file/function |
 | `doc_references_notebook` | Doc section mentions a notebook |
 | `metric_implemented_by` | Documented metric linked to implementing function |
@@ -166,6 +168,58 @@ Cell 1: defs={df}
 Cell 2: refs={df} defs={X, y}    ← data flow edge from cell 1
 Cell 3: refs={X, y} defs={model} ← data flow edge from cell 2
 ```
+
+## Python ↔ Scala (Py4J Bridge Detection)
+
+Many Spark/Databricks projects mix Python orchestration with Scala for performance-critical compute. Lumos automatically detects Py4J bridge patterns where Python invokes Scala code via the JVM gateway.
+
+### What's Detected
+
+```python
+# Python wrapper file:
+class FeatureEngineerWrapper:
+    def __init__(self, spark):
+        self._scala_obj = spark._jvm.com.example.FeatureEngineer()  # → py4j_bridge edge
+
+    def compute(self, df):
+        return spark._jvm.com.example.FeatureEngineer.giniCoefficient(df._jdf)  # → py4j_method_call edge
+```
+
+```scala
+// Scala class auto-linked by JVM path matching:
+package com.example
+
+class FeatureEngineer {
+  def giniCoefficient(df: DataFrame): Double = { ... }
+}
+```
+
+Lumos resolves the JVM path (`com.example.FeatureEngineer`) to the actual Scala class node by matching `package + class name` from the Scala extractor output.
+
+### Framework Calls Are Skipped
+
+Calls to `spark._jvm.org.apache.spark.*`, `org.apache.hadoop.*`, `java.*`, etc. are recognized as framework internals and **not** treated as user-code bridges (avoids noise).
+
+### Optional: Explicit Mapping with `python_scala.yaml`
+
+If auto-detection misses a bridge or you want to document the mapping explicitly, drop a `python_scala.yaml` at your project root:
+
+```yaml
+bridges:
+  - python: src/wrappers.py:FeatureEngineerWrapper
+    scala: src/main/scala/com/example/FeatureEngineer.scala:FeatureEngineer
+    jvm_path: com.example.FeatureEngineer
+    methods:
+      compute_gini: giniCoefficient   # Python name → Scala name
+```
+
+Requires `PyYAML` (already in `bin/requirements.txt`). Overrides take priority over auto-detection. See [`docs/python_scala.yaml.example`](docs/python_scala.yaml.example) for a fully-commented template.
+
+### Queries This Enables
+
+- *"Which Python wrappers call into Scala?"* — find all `py4j_bridge` and `py4j_method_call` edges
+- *"If I change `giniCoefficient` in Scala, which Python files break?"* — reverse traverse `py4j_method_call` edges
+- *"Show me all unresolved JVM calls"* — find edges with `target` starting with `jvm:` (no matching Scala class)
 
 ## Documentation-Specific Features
 
@@ -214,7 +268,7 @@ Lumos finds references to code and notebooks in documentation:
 ## Languages Supported (v0.1)
 
 - **Python** — full AST analysis
-- **Scala** — planned (via tree-sitter)
+- **Scala** — full tree-sitter analysis (classes, objects, traits, functions). Useful for Spark/Databricks projects.
 - **Jupyter Notebooks** — full cell analysis with magic handling
 - **Markdown** — full section and reference extraction
 
@@ -222,7 +276,7 @@ Lumos finds references to code and notebooks in documentation:
 
 Contributions welcome! Key areas:
 
-- **Scala support** via tree-sitter
+- **R support** via tree-sitter (statistical/biomedical ML)
 - **PDF/Word doc parsing** for model documents
 - **Dashboard** with React Flow (v0.2 goal)
 - **Incremental scanning** (only re-analyze changed files)
