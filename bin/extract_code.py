@@ -268,7 +268,7 @@ def _attribute_name(node: ast.Attribute) -> str:
 
 def analyze_file(filepath: str, project_root: str) -> dict:
     """Analyze a single Python file and extract all code entities."""
-    rel_path = os.path.relpath(filepath, project_root)
+    rel_path = os.path.relpath(filepath, project_root).replace(os.sep, "/")
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             source = f.read()
