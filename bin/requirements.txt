@@ -1,9 +1,8 @@
 nbformat>=5.0
-jupyter-notebook-parser>=0.1.0
 # Tree-sitter for Scala (Spark/Databricks projects)
 # Note: tree-sitter and tree-sitter-scala versions must match
-tree-sitter>=0.23,<0.24
-tree-sitter-scala>=0.23,<0.24
+tree-sitter>=0.25.1
+tree-sitter-scala>=0.25.1
 # Optional: only needed if you use python_scala.yaml to override Py4J bridge mappings
 PyYAML>=6.0
 # Optional: only needed to read .docx, .pdf, .pptx, .xlsx documents
