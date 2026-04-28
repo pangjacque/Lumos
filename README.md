@@ -43,6 +43,11 @@ Most tools operate within a single modality:
 
 It resolves **cross-boundary dependencies** — from exploratory notebooks to production code, from model documentation to implementation — and exposes them as a **queryable, inspectable graph**.
 
+<p align="center">
+  <a href="https://pangjacque.github.io/Lumos/">
+    <img src="docs/lumos-homepage_preview_v_01.png" alt="Lumos — Visit the live homepage" width="900" />
+  </a>
+</p>
 
 ---
 
