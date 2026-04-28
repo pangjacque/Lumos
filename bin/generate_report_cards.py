@@ -523,7 +523,8 @@ switchMode('hierarchy');
 </html>"""
 
 
-def generate_report(project_root):
+def generate_report_cards(project_root):
+    """Generate the hierarchy + notebook card view of the knowledge graph as a self-contained HTML."""
     graph_path = os.path.join(project_root, ".lumos", "knowledge-graph.json")
     with open(graph_path, "r", encoding="utf-8") as f:
         graph_data = json.load(f)
@@ -536,11 +537,11 @@ def generate_report(project_root):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Lumos Card-Style Report Generator v2")
+    parser = argparse.ArgumentParser(description="Lumos Cards Report Generator")
     parser.add_argument("project_root", nargs="?", default=".", help="Project root directory")
     args = parser.parse_args()
     project_root = os.path.abspath(args.project_root)
-    report_path = generate_report(project_root)
+    report_path = generate_report_cards(project_root)
     print(json.dumps({"status": "success", "report": report_path}))
 
 

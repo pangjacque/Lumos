@@ -620,14 +620,13 @@ document.getElementById('project-info').textContent =
 </html>"""
 
 
-def generate_report(project_root: str) -> str:
-    """Generate self-contained HTML report from knowledge graph."""
+def generate_report_force(project_root: str) -> str:
+    """Generate the force-directed view of the knowledge graph as a self-contained HTML."""
     graph_path = os.path.join(project_root, ".lumos", "knowledge-graph.json")
 
     with open(graph_path, "r", encoding="utf-8") as f:
         graph_data = json.load(f)
 
-    # Inject graph data into HTML template
     graph_json = json.dumps(graph_data)
     html = HTML_TEMPLATE.replace("__GRAPH_JSON__", graph_json)
 
@@ -639,13 +638,13 @@ def generate_report(project_root: str) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Lumos Report Generator")
+    parser = argparse.ArgumentParser(description="Lumos Force Report Generator")
     parser.add_argument("project_root", nargs="?", default=".",
                         help="Project root directory")
     args = parser.parse_args()
 
     project_root = os.path.abspath(args.project_root)
-    report_path = generate_report(project_root)
+    report_path = generate_report_force(project_root)
 
     print(json.dumps({
         "status": "success",

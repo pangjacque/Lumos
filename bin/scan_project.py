@@ -17,6 +17,7 @@ PYTHON_EXTENSIONS = {".py", ".pyi"}
 SCALA_EXTENSIONS = {".scala", ".sc"}
 NOTEBOOK_EXTENSIONS = {".ipynb"}
 DOC_EXTENSIONS = {".md", ".rst", ".txt"}
+RICH_DOC_EXTENSIONS = {".docx", ".doc", ".pdf", ".pptx", ".ppt", ".xlsx"}
 CONFIG_EXTENSIONS = {".yaml", ".yml", ".toml", ".cfg", ".ini", ".json"}
 DATA_EXTENSIONS = {".csv", ".parquet", ".tsv"}
 
@@ -50,7 +51,7 @@ def categorize_file(path: str) -> str:
         return "notebook"
     if ext in PYTHON_EXTENSIONS or ext in SCALA_EXTENSIONS:
         return "code"
-    if ext in DOC_EXTENSIONS or name == "readme" or name.startswith("readme"):
+    if ext in DOC_EXTENSIONS or ext in RICH_DOC_EXTENSIONS or name == "readme" or name.startswith("readme"):
         return "doc"
     if ext in CONFIG_EXTENSIONS or name in (
         "makefile", "dockerfile", ".dockerignore", ".gitignore",
@@ -72,6 +73,14 @@ def detect_language(path: str) -> str:
         return "jupyter"
     if ext in DOC_EXTENSIONS:
         return "markdown"
+    if ext in {".docx", ".doc"}:
+        return "word"
+    if ext == ".pdf":
+        return "pdf"
+    if ext in {".pptx", ".ppt"}:
+        return "powerpoint"
+    if ext == ".xlsx":
+        return "excel"
     if ext in {".yaml", ".yml"}:
         return "yaml"
     if ext == ".toml":

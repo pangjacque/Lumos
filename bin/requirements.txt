@@ -6,3 +6,7 @@ tree-sitter>=0.23,<0.24
 tree-sitter-scala>=0.23,<0.24
 # Optional: only needed if you use python_scala.yaml to override Py4J bridge mappings
 PyYAML>=6.0
+# Optional: only needed to read .docx, .pdf, .pptx, .xlsx documents
+# (Lumos works with .md/.rst alone; markitdown adds rich-doc support.)
+# Requires Python 3.10+. The [all] extra includes parsers for all supported formats.
+markitdown[all]>=0.0.1
