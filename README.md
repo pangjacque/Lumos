@@ -110,6 +110,23 @@ pip install -r bin/requirements.txt
 
 Runs the full pipeline (code + notebooks + docs + cross-references) and writes results to `.lumos/`.
 
+**Optional flags** for partial scans:
+
+| Flag | Effect |
+|------|--------|
+| `--code-only` | Only scan code files (skip notebooks and docs) |
+| `--notebook-only` | Only scan notebooks (skip code and docs) |
+| `--doc-only` | Only scan documentation (skip code and notebooks) |
+| `--no-report` | Skip HTML report generation |
+| `--rebuild` | Force full rebuild, ignore incremental cache |
+
+```bash
+/lumos:everything --code-only        # just Python/Scala
+/lumos:everything --notebook-only    # just .ipynb files
+/lumos:everything --doc-only         # just .md / .pdf / .docx
+/lumos:everything --rebuild          # ignore cache, full re-scan
+```
+
 ### 3. Open the dashboard
 
 ```bash
