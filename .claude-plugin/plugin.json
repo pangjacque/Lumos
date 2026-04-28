@@ -7,6 +7,8 @@
   },
   "repository": "https://github.com/pangjacque/Lumos",
   "license": "MIT",
+  "skills": "skills/",
+  "agents": "agents/",
   "keywords": [
     "knowledge-graph",
     "jupyter",
