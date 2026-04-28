@@ -1,0 +1,15 @@
+{
+  "name": "lumos",
+  "metadata": {
+    "description": "Illuminate your data science project — a Claude Code plugin that builds a unified knowledge graph from code, Jupyter notebooks, and documentation, with cross-boundary import resolution that connects them all."
+  },
+  "owner": {
+    "name": "pangjacque"
+  },
+  "plugins": [
+    {
+      "name": "lumos",
+      "source": "."
+    }
+  ]
+}
