@@ -152,25 +152,16 @@ claude --plugin-dir /path/to/Lumos
 
 ### VS Code + GitHub Copilot
 
-**Online:** Open the Command Palette (`Cmd+Shift+P`) → run `Chat: Install Plugin From Source` → paste:
+VS Code Copilot installs Lumos as **per-workspace skills** via symlinks into your workspace's `.github/skills/` folder. Once installed, `/lumos-everything`, `/lumos-chat`, and `/lumos-diff` become available in Copilot Chat.
 
-```
-https://github.com/pangjacque/Lumos
-```
+➡️ **See [`.vscode/INSTALL.md`](.vscode/INSTALL.md) for full step-by-step instructions** (PowerShell for Windows, Bash for macOS/Linux), including the ZIP-download fallback if `git clone` is blocked on your network.
 
-**Offline:** [Download the ZIP](https://github.com/pangjacque/Lumos/archive/refs/heads/main.zip) from GitHub, unzip to a known location (e.g. `~/lumos`), then add the **unzipped folder path** to your VS Code `settings.json`:
+**Quick summary:**
+1. Clone Lumos somewhere stable (or download the ZIP)
+2. Run a small symlink script per workspace where you want Lumos available
+3. Reload VS Code → skills appear when you type `/` in Copilot Chat
 
-```json
-{
-  "chat.pluginLocations": [
-    "/Users/yourname/lumos"
-  ]
-}
-```
-
-> Point at the **directory containing `.claude-plugin/plugin.json`** — not at the `.zip` file. GitHub ZIPs sometimes unzip to a doubly-nested folder (`Lumos-main/Lumos-main/`) — point at the inner one.
-
-Reload VS Code (`Cmd+Shift+P` → `Developer: Reload Window`). Skills appear when you type `/` in Copilot Chat. Both methods register Lumos via the [`.claude-plugin/plugin.json`](https://code.visualstudio.com/docs/copilot/customization/agent-plugins) manifest, an officially supported location. Requires VS Code 1.110+ (Agent Plugins, Preview).
+Tested on VS Code 1.108+ with the GitHub Copilot extension. This is **per-workspace** — repeat the symlink step for each project. Step 1 is one-time.
 
 ### Platform Compatibility
 
