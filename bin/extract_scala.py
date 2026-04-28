@@ -246,7 +246,7 @@ def extract_definitions(tree_root: Node, source_bytes: bytes, filepath: str, pac
 
 def analyze_file(filepath: str, project_root: str) -> dict:
     """Analyze a single Scala file and extract all code entities."""
-    rel_path = os.path.relpath(filepath, project_root)
+    rel_path = os.path.relpath(filepath, project_root).replace(os.sep, "/")
     try:
         with open(filepath, "rb") as f:
             source_bytes = f.read()

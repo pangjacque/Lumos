@@ -142,7 +142,7 @@ def discover_files(project_root: str) -> list:
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             if not should_ignore(filepath, project_root):
-                rel_path = os.path.relpath(filepath, project_root)
+                rel_path = os.path.relpath(filepath, project_root).replace(os.sep, "/")
                 files.append(rel_path)
 
     return files

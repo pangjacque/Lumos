@@ -248,7 +248,7 @@ def read_doc_content(filepath: str):
 
 def analyze_document(filepath: str, project_root: str) -> dict:
     """Analyze a single documentation file."""
-    rel_path = os.path.relpath(filepath, project_root)
+    rel_path = os.path.relpath(filepath, project_root).replace(os.sep, "/")
 
     try:
         content, source_format = read_doc_content(filepath)

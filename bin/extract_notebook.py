@@ -246,7 +246,7 @@ def detect_cell_errors(cell_outputs: list) -> dict:
 
 def analyze_notebook(filepath: str, project_root: str) -> dict:
     """Analyze a single Jupyter notebook."""
-    rel_path = os.path.relpath(filepath, project_root)
+    rel_path = os.path.relpath(filepath, project_root).replace(os.sep, "/")
 
     try:
         with open(filepath, "r", encoding="utf-8") as f:
