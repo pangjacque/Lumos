@@ -358,6 +358,20 @@ function toggleDir(dirId) {
 function renderHierarchy() {
   let view = document.getElementById('hierarchy-view');
   let query = document.getElementById('search').value.toLowerCase();
+
+  // Capture user's current expand/collapse state so re-renders don't fold
+  // the tree back to defaults. Skip during search — match-driven expansion is desired then.
+  let userExpanded = new Set();
+  let userCollapsed = new Set();
+  if (!query) {
+    document.querySelectorAll('.dir-header').forEach(el => {
+      let dirId = el.id.replace(/^dh-/, '');
+      if (!dirId) return;
+      if (el.classList.contains('collapsed')) userCollapsed.add(dirId);
+      else userExpanded.add(dirId);
+    });
+  }
+
   let fileNodes = G.nodes.filter(n=>n.type==='file');
   let containsEdges = G.edges.filter(e=>e.type==='contains');
   let crossTargets = new Set();
@@ -369,6 +383,22 @@ function renderHierarchy() {
   let html = renderDirTree(tree, query, crossTargets, crossCounts, 0);
   if (!html.trim()) html = '<div style="text-align:center;color:var(--text-muted);padding:60px">No code files found</div>';
   view.innerHTML = html;
+
+  // Restore user's expand/collapse state captured before re-render
+  if (!query && (userExpanded.size || userCollapsed.size)) {
+    userExpanded.forEach(dirId => {
+      let header = document.getElementById('dh-' + dirId);
+      let content = document.getElementById('dc-' + dirId);
+      if (header) header.classList.remove('collapsed');
+      if (content) content.classList.remove('collapsed-content');
+    });
+    userCollapsed.forEach(dirId => {
+      let header = document.getElementById('dh-' + dirId);
+      let content = document.getElementById('dc-' + dirId);
+      if (header) header.classList.add('collapsed');
+      if (content) content.classList.add('collapsed-content');
+    });
+  }
 }
 
 // ===================== NOTEBOOK VIEW =====================
