@@ -1,0 +1,418 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const githubUrl = 'https://github.com/pangjacque/Lumos';
+const docsUrl = 'https://github.com/pangjacque/Lumos#readme';
+const base = import.meta.env.BASE_URL; // e.g. '/Lumos' on GitHub Pages
+const demoUrl = `${base.replace(/\/$/, '')}/report-force.html`;
+---
+
+<Layout>
+  <header class="site">
+    <div class="inner">
+      <a href={base} class="brand">lu<span class="glow-m">m</span>os</a>
+      <nav>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#install">Install</a>
+        <a href="#commands">Commands</a>
+        <a href="#architecture">Architecture</a>
+        <a href={githubUrl} target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 1. HERO -->
+  <section class="hero">
+    <div class="container hero-container">
+      <h1 class="lumos-wordmark">lu<span class="glow-m">m</span>os</h1>
+      <p class="hero-tagline">Illuminate the hidden graph inside your modeling system.</p>
+      <p class="sub">
+        Lumos builds a unified knowledge graph across code, notebooks, and documentation —
+        so AI agents can reason over your modeling stack, not just search it.
+      </p>
+      <div class="ctas">
+        <a class="btn primary" href={githubUrl} target="_blank" rel="noopener">★ Star on GitHub</a>
+        <a class="btn primary" href="#demo">Live Demo</a>
+        <a class="btn primary" href={docsUrl} target="_blank" rel="noopener">Read the Docs</a>
+      </div>
+      <p class="trust">Built for quant research, ML engineering, and production modeling workflows.</p>
+    </div>
+  </section>
+
+  <!-- 2. CONCEPT GRAPH -->
+  <section class="concept-graph-section">
+    <div class="concept-graph">
+      <!-- SVG connections (rendered behind nodes) -->
+      <svg class="concept-connections" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <linearGradient id="line-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="rgba(124,156,255,0.6)" />
+            <stop offset="100%" stop-color="rgba(179,136,255,0.6)" />
+          </linearGradient>
+        </defs>
+        <line x1="150" y1="300" x2="400" y2="200" />
+        <line x1="400" y1="50"  x2="400" y2="200" />
+        <line x1="650" y1="300" x2="400" y2="200" />
+      </svg>
+
+      <!-- Nodes -->
+      <div class="concept-node concept-node-left">
+        <svg class="concept-node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 8 5 12 9 16"/>
+          <polyline points="15 8 19 12 15 16"/>
+        </svg>
+        <span class="concept-node-label">Codebase</span>
+        <p class="concept-node-sub">execution</p>
+      </div>
+      <div class="concept-node concept-node-top">
+        <svg class="concept-node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+        <span class="concept-node-label">Notebooks</span>
+        <p class="concept-node-sub">experimentation</p>
+      </div>
+      <div class="concept-node concept-node-right">
+        <svg class="concept-node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <line x1="10" y1="9" x2="8" y2="9" />
+        </svg>
+        <span class="concept-node-label">Docs</span>
+        <p class="concept-node-sub">intent</p>
+      </div>
+
+      <!-- Center core -->
+      <div class="concept-core">
+        <h2 class="concept-core-name">Lumos</h2>
+        <p class="concept-core-sub">Knowledge Graph</p>
+      </div>
+    </div>
+
+    <p class="concept-tagline">Lumos connects the artifacts that usually live apart.</p>
+  </section>
+
+  <!-- 3. PROBLEM -->
+  <section>
+    <div class="container">
+      <p class="eyebrow">The problem</p>
+      <h2 class="section-title">Modern ML systems are fragmented by design.</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Invisible dependencies</h3>
+          <p>A change in your codebase can silently break dozens of notebooks. No tool tracks the link.</p>
+        </div>
+        <div class="card">
+          <h3>Lost research lineage</h3>
+          <p>Experiments, metrics, and decisions drift away from the production code that implements them.</p>
+        </div>
+        <div class="card">
+          <h3>Opaque runtime bridges</h3>
+          <p>Python, Scala, Spark, and notebooks interact in ways IDEs cannot trace.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. DEMO -->
+  <section id="demo" class="demo-section">
+    <div class="container demo-container">
+      <p class="eyebrow">Live demo</p>
+      <h2 class="section-title centered">Explore a real knowledge graph in your browser.</h2>
+      <p class="section-lead centered">
+        The graph below showcases Lumos applied to the <a class="inline-link" href="https://microsoft.github.io/FLAML/" target="_blank" rel="noopener">Microsoft FLAML</a> codebase — illustrating how Lumos reconstructs lineage across notebooks, code, and documentation in a real-world ML system — 88 Python files, 35 notebooks, 6 docs, and ~4,000 cross-boundary edges.
+      </p>
+      <p class="demo-hint-wrapper">
+        <span class="demo-hint-pill">Fully interactive — explore by panning, zooming, or selecting nodes.</span>
+      </p>
+    </div>
+    <div class="demo-stage">
+      <button
+        class="demo-launch"
+        type="button"
+        data-demo-url={demoUrl}
+        onclick={`
+          const iframe = document.createElement('iframe');
+          iframe.src = this.dataset.demoUrl;
+          iframe.title = 'Lumos interactive demo';
+          iframe.style.cssText = 'width:100%;height:100%;border:0;border-radius:14px;';
+          this.parentElement.replaceChildren(iframe);
+        `}>
+        <span class="demo-launch-icon">▶</span>
+        <span class="demo-launch-label">Launch interactive demo</span>
+        <span class="demo-launch-meta">~1.8 MB · loads only when you click</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 5. CAPABILITIES -->
+  <section id="capabilities" class="alt">
+    <div class="container">
+      <p class="eyebrow">Core capabilities</p>
+      <h2 class="section-title">From files to system intelligence.</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Cross-boundary lineage</h3>
+          <p>From experimentation to implementation, Lumos links notebooks, code, and documentation bidirectionally — turning disconnected artifacts into a coherent knowledge graph.</p>
+        </div>
+        <div class="card">
+          <h3>Execution lineage graph</h3>
+          <p>From Jupyter notebook cell execution to function calls, Lumos reconstructs how code actually runs — linking notebooks and code into a living graph of dependencies and execution flow.</p>
+        </div>
+        <div class="card">
+          <h3>Semantic documentation layer</h3>
+          <p>Extract model metrics, governance text, and implementation references from Markdown, PDF, and Word.</p>
+        </div>
+        <div class="card">
+          <h3>Impact analysis</h3>
+          <p>Ask what breaks before changing a feature, metric, or model class.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5b. INSTALL -->
+  <section id="install">
+    <div class="container">
+      <p class="eyebrow">Install</p>
+      <h2 class="section-title">Get started in <span class="accent">30 seconds.</span></h2>
+      <p class="section-lead">One marketplace command. Works in Claude Code, VS Code Copilot, and offline.</p>
+
+      <div class="install-steps">
+        <div class="install-step">
+          <span class="install-step-num">1</span>
+          <div class="install-step-body">
+            <h3 class="install-step-title">Install the plugin</h3>
+            <div class="terminal-block">
+              <div class="terminal-header">
+                <span class="terminal-header-left">
+                  <span class="terminal-dot"></span>
+                  <span>Claude Code</span>
+                </span>
+                <button class="terminal-copy" type="button" data-copy="/plugin marketplace add pangjacque/Lumos&#10;/plugin install lumos">⧉ Copy</button>
+              </div>
+              <pre class="terminal-body"><code><span class="cmd">/plugin</span> marketplace add <span class="arg">pangjacque/Lumos</span>
+<span class="cmd">/plugin</span> install <span class="arg">lumos</span></code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="install-step">
+          <span class="install-step-num">2</span>
+          <div class="install-step-body">
+            <h3 class="install-step-title">Scan your project</h3>
+            <div class="terminal-block">
+              <div class="terminal-header">
+                <span class="terminal-header-left">
+                  <span class="terminal-dot"></span>
+                  <span>Claude Code</span>
+                </span>
+                <button class="terminal-copy" type="button" data-copy="/lumos:everything">⧉ Copy</button>
+              </div>
+              <pre class="terminal-body"><code><span class="cmd">/lumos:everything</span></code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="install-step">
+          <span class="install-step-num">3</span>
+          <div class="install-step-body">
+            <h3 class="install-step-title">Open the interactive dashboard</h3>
+            <div class="terminal-block">
+              <div class="terminal-header">
+                <span class="terminal-header-left">
+                  <span class="terminal-dot"></span>
+                  <span>Shell</span>
+                </span>
+                <button class="terminal-copy" type="button" data-copy="open .lumos/report-force.html">⧉ Copy</button>
+              </div>
+              <pre class="terminal-body"><code><span class="cmd">open</span> <span class="ext">.lumos/report-force.html</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.terminal-copy');
+      if (!btn) return;
+      const text = btn.dataset.copy || '';
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('copied');
+        }, 1400);
+      });
+    });
+  </script>
+
+  <!-- 5c. COMMANDS -->
+  <section id="commands" class="alt">
+    <div class="container">
+      <p class="eyebrow">Commands</p>
+      <h2 class="section-title">Everything you can ask.</h2>
+      <p class="section-lead">Three slash commands cover the full workflow — scan, query, analyze impact.</p>
+
+      <div class="commands-grid">
+        <article class="command-card">
+          <code class="command-name">/lumos:everything</code>
+          <h3 class="command-title">Full project scan</h3>
+          <p>Runs the multi-agent pipeline — code, notebooks, docs, cross-boundary references, Py4J bridges. Produces the knowledge graph and both HTML reports.</p>
+        </article>
+        <article class="command-card">
+          <code class="command-name">/lumos:chat</code>
+          <h3 class="command-title">Ask anything about the project</h3>
+          <p>Natural-language queries over the graph.</p>
+          <ul class="command-examples">
+            <li><code>which notebooks use gini_coefficient?</code></li>
+            <li><code>if I change LogisticModel, what breaks?</code></li>
+            <li><code>which metrics in the model doc are implemented in code?</code></li>
+          </ul>
+        </article>
+        <article class="command-card command-card-feature">
+          <code class="command-name">/lumos:diff</code>
+          <h3 class="command-title">Impact analysis before you commit</h3>
+          <p>See every notebook cell, doc section, and Scala bridge that your unstaged changes will touch. Run before any non-trivial PR.</p>
+          <p class="command-tagline">Never commit a change to a core feature class without knowing which 50 notebooks it will break.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. ARCHITECTURE -->
+  <section id="architecture" class="alt">
+    <div class="container">
+      <p class="eyebrow">Architecture</p>
+      <h2 class="section-title">Agent-orchestrated graph construction.</h2>
+      <p class="section-lead">
+        Lumos combines AST analysis, notebook parsing, documentation extraction, and cross-runtime
+        resolution into one heterogeneous graph.
+      </p>
+
+      <div class="arch-pipeline">
+        <!-- Stage 1: Scanner -->
+        <div class="arch-stage">
+          <div class="arch-stage-label">discover</div>
+          <div class="arch-node arch-node-blue">
+            <span class="arch-node-num">1</span>
+            <div class="arch-node-name">Scanner</div>
+            <div class="arch-node-sub">file discovery</div>
+          </div>
+        </div>
+
+        <!-- Connector: fan-out -->
+        <div class="arch-connector arch-connector-fan" aria-hidden="true">
+          <svg viewBox="0 0 60 200" preserveAspectRatio="none">
+            <path d="M0 100 L60 30" stroke="url(#arch-grad)" stroke-width="1.2" fill="none"/>
+            <path d="M0 100 L60 75" stroke="url(#arch-grad)" stroke-width="1.2" fill="none"/>
+            <path d="M0 100 L60 125" stroke="url(#arch-grad)" stroke-width="1.2" fill="none"/>
+            <path d="M0 100 L60 170" stroke="url(#arch-grad)" stroke-width="1.2" fill="none"/>
+            <defs>
+              <linearGradient id="arch-grad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="rgba(138,43,226,0)"/>
+                <stop offset="50%" stop-color="rgba(138,43,226,0.5)"/>
+                <stop offset="100%" stop-color="rgba(138,43,226,0)"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Stage 2: Parallel parsers -->
+        <div class="arch-stage arch-stage-stack">
+          <div class="arch-stage-label">parse · in parallel</div>
+          <div class="arch-node arch-node-violet">
+            <span class="arch-node-num">2</span>
+            <div class="arch-node-name">Code Analyzer</div>
+            <div class="arch-node-sub">Python AST</div>
+          </div>
+          <div class="arch-node arch-node-violet">
+            <span class="arch-node-num">2</span>
+            <div class="arch-node-name">Notebook Analyzer</div>
+            <div class="arch-node-sub">nbformat + magics</div>
+          </div>
+          <div class="arch-node arch-node-violet">
+            <span class="arch-node-num">2</span>
+            <div class="arch-node-name">Doc Analyzer</div>
+            <div class="arch-node-sub">markdown + markitdown</div>
+          </div>
+          <div class="arch-node arch-node-violet">
+            <span class="arch-node-num">2</span>
+            <div class="arch-node-name">Scala Analyzer</div>
+            <div class="arch-node-sub">tree-sitter</div>
+          </div>
+        </div>
+
+        <!-- Connector: fan-in -->
+        <div class="arch-connector arch-connector-merge" aria-hidden="true">
+          <svg viewBox="0 0 60 200" preserveAspectRatio="none">
+            <path d="M0 30  L60 100" stroke="url(#arch-grad-2)" stroke-width="1.2" fill="none"/>
+            <path d="M0 75  L60 100" stroke="url(#arch-grad-2)" stroke-width="1.2" fill="none"/>
+            <path d="M0 125 L60 100" stroke="url(#arch-grad-2)" stroke-width="1.2" fill="none"/>
+            <path d="M0 170 L60 100" stroke="url(#arch-grad-2)" stroke-width="1.2" fill="none"/>
+            <defs>
+              <linearGradient id="arch-grad-2" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="rgba(138,43,226,0)"/>
+                <stop offset="50%" stop-color="rgba(138,43,226,0.5)"/>
+                <stop offset="100%" stop-color="rgba(138,43,226,0)"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Stage 3: Resolver -->
+        <div class="arch-stage">
+          <div class="arch-stage-label">resolve</div>
+          <div class="arch-node arch-node-amber">
+            <span class="arch-node-num">3</span>
+            <div class="arch-node-name">Import Resolver</div>
+            <div class="arch-node-sub">cross-boundary edges</div>
+          </div>
+        </div>
+
+        <div class="arch-connector arch-connector-line" aria-hidden="true">
+          <svg viewBox="0 0 40 200" preserveAspectRatio="none">
+            <path d="M0 100 L40 100" stroke="rgba(138,43,226,0.45)" stroke-width="1.2" fill="none"/>
+          </svg>
+        </div>
+
+        <!-- Stage 4: Reviewer -->
+        <div class="arch-stage">
+          <div class="arch-stage-label">validate</div>
+          <div class="arch-node arch-node-green">
+            <span class="arch-node-num">4</span>
+            <div class="arch-node-name">Graph Reviewer</div>
+            <div class="arch-node-sub">merge + dedupe</div>
+          </div>
+        </div>
+
+        <div class="arch-connector arch-connector-line" aria-hidden="true">
+          <svg viewBox="0 0 40 200" preserveAspectRatio="none">
+            <path d="M0 100 L40 100" stroke="rgba(138,43,226,0.45)" stroke-width="1.2" fill="none"/>
+          </svg>
+        </div>
+
+        <!-- Stage 5: Output -->
+        <div class="arch-stage">
+          <div class="arch-stage-label">render</div>
+          <div class="arch-node arch-node-output">
+            <span class="arch-node-num">5</span>
+            <div class="arch-node-name">HTML Report</div>
+            <div class="arch-node-sub">interactive graph</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="inner">
+      <span class="legal">Static analysis × knowledge graphs × LLM-native querying</span>
+      <span>MIT License</span>
+    </div>
+  </footer>
+</Layout>

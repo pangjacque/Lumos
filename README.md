@@ -7,6 +7,8 @@
 </p>
 
 <p align="center">
+  <a href="https://pangjacque.github.io/Lumos/"><img src="https://img.shields.io/badge/Homepage-Live-00C853" alt="Homepage" /></a>
+  <a href="https://pangjacque.github.io/Lumos/#demo"><img src="https://img.shields.io/badge/Live_Demo-Try_it-00C853" alt="Live Demo" /></a>
   <a href="#-quick-start"><img src="https://img.shields.io/badge/Quick_Start-blue" alt="Quick Start" /></a>
   <a href="https://github.com/pangjacque/Lumos/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow" alt="License: MIT" /></a>
   <a href="https://docs.anthropic.com/en/docs/claude-code"><img src="https://img.shields.io/badge/Claude_Code-8A2BE2" alt="Claude Code" /></a>

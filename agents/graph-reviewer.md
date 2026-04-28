@@ -37,10 +37,11 @@ python3 <plugin-dir>/bin/merge_graph.py <project-root>
 - Tags are relevant to the node content
 - Complexity ratings are reasonable
 
-3. Generate the HTML report:
+3. Generate the HTML reports (Force and Cards views — both are equally important):
 
 ```bash
-python3 <plugin-dir>/bin/generate_report.py <project-root>
+python3 <plugin-dir>/bin/generate_report_force.py <project-root>
+python3 <plugin-dir>/bin/generate_report_cards.py <project-root>
 ```
 
 4. Report:
